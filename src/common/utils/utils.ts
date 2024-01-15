@@ -1,5 +1,5 @@
 import { Creep, StructureSpawn, RoomPosition } from 'game/prototypes';
-import { FindPathOpts, MoveToOpts } from 'game/path-finder'
+import { MoveToOpts } from 'game/path-finder'
 import * as C from "game/constants";
 
 export function attempSpawn(spawn: StructureSpawn, partList: (C.BodyPartConstant)[]): Creep | undefined {
