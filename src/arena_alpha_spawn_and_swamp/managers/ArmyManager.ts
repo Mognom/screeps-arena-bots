@@ -67,115 +67,6 @@ export class ArmyManager extends Manager {
         }
     }
 
-    // tickArmyCreep(creep: Creep, enemySoldiers: Creep[], enemyWorkers: Creep[], enemySpawn: StructureSpawn, fleeing: boolean) {
-    //     /**
-    //      * TODO:
-    //      *  - Better targeting
-    //      *  - Better kiting (better flee)
-    //      *      - Pathing gets stuck and sends creeps into melee range / flee across
-    //      *  - Better force calculations
-    //      *  - Do not kite if fight is won, press on into melee range
-    //      *  - Stick together more
-    //      *  - Defend the base if needed?
-    //      *  - Better force calculations
-    //      */
-    //     if (creep.spawning) {
-    //         return;
-    //     }
-    //     if (creep.x === undefined) {
-    //         var index = this.army.indexOf(creep);
-    //         if (index !== -1) {
-    //             this.army.splice(index, 1);
-    //         }
-    //         console.log("army removed :" + creep.id);
-    //         return;
-    //     }
-
-    //     var closestSoldier = creep.findClosestByRange(enemySoldiers);
-    //     var closest = creep.findClosestByRange(enemyWorkers);
-    //     var attackTarget: Creep | StructureSpawn = enemySpawn;
-    //     var approachTarget: Creep | StructureSpawn = enemySpawn;
-    //     var rangeToTarget = creep.getRangeTo(enemySpawn);
-    //     var shouldIgnore: Creep[] = [];
-
-    //     // Prioritize soldiers to workers
-    //     if (closestSoldier) {
-    //         var rangeToClosest = creep.getRangeTo(closestSoldier);
-    //         if (rangeToClosest <= 45) {
-    //             approachTarget = closestSoldier;
-    //             rangeToTarget = rangeToClosest;
-    //             if (rangeToClosest <= 3) {
-    //                 attackTarget = closestSoldier;
-    //             }
-    //         }
-    //     }
-
-    //     if (closest && !attackTarget) {
-    //         var rangeToClosest = creep.getRangeTo(closest);
-    //         if (rangeToClosest <= 7) {
-    //             if (!approachTarget) {
-    //                 approachTarget = closest;
-    //                 rangeToTarget = rangeToClosest;
-    //             }
-    //             if (rangeToClosest <= 3) {
-    //                 attackTarget = closest;
-    //                 rangeToTarget = rangeToClosest;
-    //             }
-    //         }
-    //     }
-
-    //     if (approachTarget === enemySpawn) {
-    //         GLOBA_VISUAL.renderCircle(creep, 35);
-    //     }
-
-    //     if (rangeToTarget >= 7) {
-    //         shouldIgnore = this.army;
-    //     }
-    //     if (rangeToTarget <= 3) {
-    //         if (rangeToTarget <= 1) {
-    //             creep.rangedMassAttack();
-    //         } else {
-    //             creep.rangedAttack(attackTarget);
-    //         }
-    //         if (rangeToTarget <= 2) {
-    //             flee(creep, attackTarget); // TODO improve logic
-    //         }
-    //     } else {
-    //         if (fleeing && rangeToTarget > 10) {
-    //             creep.moveTo(this.spawnManager.spawn);
-    //         } else {
-    //             creep.moveTo(approachTarget, { ignore: shouldIgnore });
-    //         }
-    //     }
-
-    //     // Heal others if needed
-    //     var damagedCreeps = this.army.filter(c => c.hits < c.hitsMax);
-    //     var healTarget: Creep | undefined;
-    //     var healDistance: number;
-    //     if (creep.hits < creep.hitsMax - 200) {
-    //         healTarget = creep;
-    //         healDistance = 0;
-    //         // Enforce flee
-    //         flee(creep, attackTarget);
-    //     } else {
-    //         for (var damaged of damagedCreeps) {
-    //             var range = creep.getRangeTo(damaged);
-    //             healTarget = damaged;
-    //             healDistance = range;
-    //             if (range <= 1) {
-    //                 break;
-    //             }
-    //         }
-    //     }
-    //     if (healTarget) {
-    //         if (healDistance! <= 1) {
-    //             creep.heal(healTarget);
-    //         } else {
-    //             creep.rangedHeal(healTarget);
-    //         }
-    //     }
-    // }
-
     tickHunterCreep(creep: Creep, enemies: Creep[], gatherer: Creep | undefined) {
         /**
          * TOOD:
@@ -205,7 +96,7 @@ export class ArmyManager extends Manager {
         }
 
         if (rangeToTarget >= 7) {
-            shouldIgnore = this.army.map(a => a.creep);
+            shouldIgnore = this.army;
         }
 
         if (target) {

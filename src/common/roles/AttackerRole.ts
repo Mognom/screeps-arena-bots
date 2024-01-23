@@ -17,25 +17,25 @@ export class AttackerRole extends Role {
          *  - Defend the base if needed?
          *  - Better force calculations
          */
-        if (this.creep.x === undefined) {
+        if (this.x === undefined) {
             var index = army.indexOf(this);
             if (index !== -1) {
                 army.splice(index, 1);
             }
-            console.log("army removed :" + this.creep.id);
+            console.log("army removed :" + this.id);
             return;
         }
 
-        var closestSoldier = this.creep.findClosestByRange(enemySoldiers);
-        var closest = this.creep.findClosestByRange(enemyWorkers);
+        var closestSoldier = this.findClosestByRange(enemySoldiers);
+        var closest = this.findClosestByRange(enemyWorkers);
         var attackTarget: Creep | StructureSpawn = enemySpawn!;
         var approachTarget: Creep | StructureSpawn = enemySpawn!;
-        var rangeToTarget = this.creep.getRangeTo(enemySpawn!);
+        var rangeToTarget = this.getRangeTo(enemySpawn!);
         var shouldIgnore: Creep[] = [];
 
         // Prioritize soldiers to workers
         if (closestSoldier) {
-            var rangeToClosest = this.creep.getRangeTo(closestSoldier);
+            var rangeToClosest = this.getRangeTo(closestSoldier);
             if (rangeToClosest <= 45) {
                 approachTarget = closestSoldier;
                 rangeToTarget = rangeToClosest;
@@ -46,7 +46,7 @@ export class AttackerRole extends Role {
         }
 
         if (closest && !attackTarget) {
-            var rangeToClosest = this.creep.getRangeTo(closest);
+            var rangeToClosest = this.getRangeTo(closest);
             if (rangeToClosest <= 7) {
                 if (!approachTarget) {
                     approachTarget = closest;
@@ -60,38 +60,38 @@ export class AttackerRole extends Role {
         }
 
         if (rangeToTarget >= 7) {
-            shouldIgnore = army.map(a => a.creep);
+            shouldIgnore = army;
         }
         if (rangeToTarget <= 3) {
             if (rangeToTarget <= 1) {
-                this.creep.rangedMassAttack();
+                this.rangedMassAttack();
             } else {
-                this.creep.rangedAttack(attackTarget);
+                this.rangedAttack(attackTarget);
             }
             if (rangeToTarget <= 2) {
-                flee(this.creep, attackTarget); // TODO improve logic
+                flee(this, attackTarget); // TODO improve logic
             }
         } else {
             if (fleeing && rangeToTarget > 10) {
-                this.creep.moveTo(mySpawn);
+                this.moveTo(mySpawn);
             } else {
-                this.creep.moveTo(approachTarget, { ignore: shouldIgnore });
+                this.moveTo(approachTarget, { ignore: shouldIgnore });
             }
         }
 
         // Heal others if needed
-        var damagedCreeps = army.filter(a => a.creep.hits < a.creep.hitsMax);
+        var damagedCreeps = army.filter(a => a.hits < a.hitsMax);
         var healTarget: Creep | undefined;
         var healDistance: number;
-        if (this.creep.hits < this.creep.hitsMax - 200) {
-            healTarget = this.creep;
+        if (this.hits < this.hitsMax - 200) {
+            healTarget = this;
             healDistance = 0;
             // Enforce flee
-            flee(this.creep, attackTarget);
+            flee(this, attackTarget);
         } else {
             for (var damaged of damagedCreeps) {
-                var range = this.creep.getRangeTo(damaged.creep);
-                healTarget = damaged.creep;
+                var range = this.getRangeTo(damaged);
+                healTarget = damaged;
                 healDistance = range;
                 if (range <= 1) {
                     break;
@@ -100,9 +100,9 @@ export class AttackerRole extends Role {
         }
         if (healTarget) {
             if (healDistance! <= 1) {
-                this.creep.heal(healTarget);
+                this.heal(healTarget);
             } else {
-                this.creep.rangedHeal(healTarget);
+                this.rangedHeal(healTarget);
             }
         }
     }
