@@ -12,12 +12,14 @@ export abstract class Role implements Creep {
     plannedHealing: number;
     private previousHits: number;
     damageReceived: number;
+    private currentSwampSpeed: number;
 
     constructor(creep: Creep) {
         this.creep = creep;
         this.plannedHealing = 0;
         this.damageReceived = 0;
         this.previousHits = creep.hits;
+        this.currentSwampSpeed = 2;
     }
 
     /**
@@ -28,6 +30,17 @@ export abstract class Role implements Creep {
 
         this.plannedHealing = 0;
         this.previousHits = this.hits;
+
+        // Calculate cost of moving through swamps fro this Creep current status
+        if (this.hits < this.hitsMax) {
+            let bodyCount = this.hitsMax / 100;
+            let moveCount = (bodyCount * 5) / 6;
+            let brokenMoves = this.hits % 100;
+
+            let staminaPerTick = (moveCount - brokenMoves) * 2;
+            let staminaPerMove = (10 * bodyCount) / 6;
+            this.currentSwampSpeed = Math.ceil(staminaPerMove / staminaPerTick) * 2; // *2 to go from movement ticks to terrain cost
+        }
     }
 
     /**
@@ -84,6 +97,13 @@ export abstract class Role implements Creep {
         return this.creep.move(direction);
     }
     moveTo(target: RoomPosition, opts?: MoveToOpts | undefined) {
+        if (!opts) {
+            opts = {};
+        }
+        if (opts.swampCost === undefined) {
+            opts.swampCost = this.currentSwampSpeed;
+        }
+
         return this.creep.moveTo(target, opts);
     }
     rangedAttack(target: Creep | Structure<StructureConstant>) {

@@ -5,7 +5,7 @@ import { Creep, StructureContainer, StructureExtension, ConstructionSite, Struct
 import { LEFT_BASE_X, RIGHT_BASE_X } from "arena_alpha_spawn_and_swamp/main";
 import * as C from "game/constants";
 
-const REMOTEBUILDER_TEMPLATE = [C.WORK, C.CARRY, C.CARRY, C.MOVE, C.MOVE, C.MOVE, C.MOVE, C.MOVE];
+const REMOTEBUILDER_TEMPLATE = [C.MOVE, C.MOVE, C.MOVE, C.MOVE, C.MOVE, C.CARRY, C.CARRY, C.WORK];
 // const GATHERERER = [C.CARRY, C.CARRY, C.CARRY, C.MOVE, C.MOVE, C.MOVE]
 
 const EXTENSION_POSITIONS = [
