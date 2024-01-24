@@ -1,6 +1,7 @@
 import * as C from "game/constants";
 
 import { Creep, StructureContainer } from "game/prototypes";
+import { LOCALMINER, LOCALRELAY } from "common/constants/templates";
 
 import { Manager } from "common/managers/Manager";
 import { Priority } from "common/managers/spawn/Priority";
@@ -8,8 +9,6 @@ import { SpawnManager } from "common/managers/spawn/SpawnManager";
 import { SpawnOrder } from "common/managers/spawn/SpawnOrder";
 import { getObjectsByPrototype } from "game/utils";
 
-const LOCALMINER = [C.CARRY, C.MOVE];
-const LOCALRELAY = [C.CARRY];
 /**
  * TODO:
  * - Fix stop if no more container

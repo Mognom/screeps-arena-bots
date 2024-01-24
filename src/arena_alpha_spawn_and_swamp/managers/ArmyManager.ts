@@ -1,6 +1,7 @@
 import * as C from "game/constants";
 
 import { Creep, StructureSpawn } from "game/prototypes";
+import { HUNTER_TEMPLATE, KITE_TEMPLATE } from "common/constants/templates";
 import { LEFT_BASE_X, RIGHT_BASE_X } from "common/constants";
 
 import { AttackerRole } from "common/roles/AttackerRole";
@@ -16,11 +17,6 @@ import { getObjectsByPrototype } from "game/utils";
 const ARMY_QUEUE_NAME = "army";
 const ARMY_PARTS: C.BodyPartConstant[] = [C.ATTACK, C.RANGED_ATTACK, C.HEAL];
 const HUNTER_QUEUE_NAME = "hunt";
-const HUNTER_TEMPLATE = [C.MOVE, C.MOVE, C.MOVE, C.MOVE, C.MOVE, C.RANGED_ATTACK]; // 450?, 1 swamp
-// const KITE_TEMPLATE = [C.MOVE, C.MOVE, C.MOVE, C.MOVE, C.MOVE, C.MOVE, C.MOVE, C.MOVE, C.RANGED_ATTACK, C.RANGED_ATTACK, C.HEAL]; // 950, 2 swamp
-const KITE_TEMPLATE = [C.MOVE, C.MOVE, C.MOVE, C.MOVE, C.MOVE, C.MOVE, C.MOVE, C.MOVE, C.MOVE, C.MOVE, C.RANGED_ATTACK, C.HEAL]; // 900, 1 swamp
-// const MELEE_TEMPLATE = [C.MOVE, C.MOVE, C.MOVE, C.MOVE, C.MOVE, C.MOVE, C.MOVE, C.MOVE, C.MOVE, C.MOVE, C.ATTACK, C.ATTACK]; // 660, 1 swamp
-// const HEAL_TEMPLATE = [C.MOVE, C.MOVE, C.MOVE, C.MOVE, C.MOVE, C.MOVE, C.MOVE, C.MOVE, C.MOVE, C.MOVE, C.HEAL, C.HEAL]; // 1000 , 1 swamp
 
 export class ArmyManager extends Manager {
     private midGameEconomyManager: MidGameEconomyManager;

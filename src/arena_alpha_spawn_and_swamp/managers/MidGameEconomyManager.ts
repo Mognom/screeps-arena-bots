@@ -6,11 +6,9 @@ import { createConstructionSite, getObjectsByPrototype } from "game/utils";
 
 import { Manager } from "common/managers/Manager";
 import { Priority } from "common/managers/spawn/Priority";
+import { REMOTEBUILDER_TEMPLATE } from "common/constants/templates";
 import { SpawnManager } from "common/managers/spawn/SpawnManager";
 import { SpawnOrder } from "common/managers/spawn/SpawnOrder";
-
-const REMOTEBUILDER_TEMPLATE = [C.MOVE, C.MOVE, C.MOVE, C.MOVE, C.MOVE, C.CARRY, C.CARRY, C.WORK];
-// const GATHERERER = [C.CARRY, C.CARRY, C.CARRY, C.MOVE, C.MOVE, C.MOVE]
 
 const EXTENSION_POSITIONS = [
     { x: 1, y: 1 },
