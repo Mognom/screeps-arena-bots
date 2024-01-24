@@ -1,3 +1,5 @@
+import * as C from "game/constants";
+
 import { BuildableStructure, CreepActionReturnCode, DirectionConstant, ResourceConstant } from "game/constants";
 import { ConstructionSite, Creep, Id, Resource, RoomObjectJSON, RoomPosition, Source, Structure, StructureConstant } from "game/prototypes";
 import { FindPathOpts, MoveToOpts, PathStep } from "game/path-finder";
@@ -15,12 +17,47 @@ export abstract class Role implements Creep {
     protected damageReceived: number;
     private currentSwampSpeed: number;
 
+    // Combat stats of the creep
+    private offensivePower: number;
+    private ranged: boolean;
+    private healPower: number;
+
     public constructor(creep: Creep) {
         this.creep = creep;
         this.plannedHealing = 0;
         this.damageReceived = 0;
         this.previousHits = creep.hits;
         this.currentSwampSpeed = 2;
+
+        // Calculate combat stats of the creep
+        this.ranged = false;
+        this.offensivePower = 0;
+        this.healPower = 0;
+        this.populateCombatStats();
+    }
+
+    private populateCombatStats() {
+        for (const part of this.creep.body) {
+            switch (part.type) {
+                case C.ATTACK:
+                    this.offensivePower += C.ATTACK_POWER;
+                    break;
+                case C.RANGED_ATTACK:
+                    this.offensivePower += C.RANGED_ATTACK_POWER;
+                    this.ranged = true;
+                    break;
+                case C.HEAL:
+                    this.healPower += C.HEAL_POWER;
+                    break;
+            }
+        }
+    }
+
+    public get isRanged() {
+        return this.ranged;
+    }
+    public get isWorker() {
+        return this.offensivePower === 0 && this.healPower === 0;
     }
 
     /**
