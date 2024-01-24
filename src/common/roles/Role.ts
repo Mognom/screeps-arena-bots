@@ -1,7 +1,8 @@
+import { BuildableStructure, CreepActionReturnCode, DirectionConstant, ResourceConstant } from "game/constants";
+import { ConstructionSite, Creep, Id, Resource, RoomObjectJSON, RoomPosition, Source, Structure, StructureConstant } from "game/prototypes";
+import { FindPathOpts, MoveToOpts, PathStep } from "game/path-finder";
+
 import { ScoreCollector } from "arena/prototypes";
-import { BuildableStructure } from "game/constants";
-import { MoveToOpts, FindPathOpts, PathStep } from "game/path-finder";
-import { ConstructionSite, Creep, Id, Resource, RoomObjectJSON, RoomPosition, Source, Store, Structure, StructureConstant } from "game/prototypes";
 
 /**
  * Role decorator to extend the Creep class, and allow specialization
@@ -9,12 +10,12 @@ import { ConstructionSite, Creep, Id, Resource, RoomObjectJSON, RoomPosition, So
 export abstract class Role implements Creep {
     private creep: Creep;
     // Decorated properties
-    plannedHealing: number;
+    protected plannedHealing: number;
     private previousHits: number;
-    damageReceived: number;
+    protected damageReceived: number;
     private currentSwampSpeed: number;
 
-    constructor(creep: Creep) {
+    public constructor(creep: Creep) {
         this.creep = creep;
         this.plannedHealing = 0;
         this.damageReceived = 0;
@@ -25,7 +26,7 @@ export abstract class Role implements Creep {
     /**
      * Early tick calculations, used to check the status diff between the previous and the current tick
      */
-    earlyTick(): void {
+    public earlyTick(): void {
         this.damageReceived = this.previousHits + this.plannedHealing - this.hits;
 
         this.plannedHealing = 0;
@@ -33,12 +34,12 @@ export abstract class Role implements Creep {
 
         // Calculate cost of moving through swamps fro this Creep current status
         if (this.hits < this.hitsMax) {
-            let bodyCount = this.hitsMax / 100;
-            let moveCount = (bodyCount * 5) / 6;
-            let brokenMoves = this.hits % 100;
+            const bodyCount = this.hitsMax / 100;
+            const moveCount = (bodyCount * 5) / 6;
+            const brokenMoves = this.hits % 100;
 
-            let staminaPerTick = (moveCount - brokenMoves) * 2;
-            let staminaPerMove = (10 * bodyCount) / 6;
+            const staminaPerTick = (moveCount - brokenMoves) * 2;
+            const staminaPerMove = (10 * bodyCount) / 6;
             this.currentSwampSpeed = Math.ceil(staminaPerMove / staminaPerTick) * 2; // *2 to go from movement ticks to terrain cost
         }
     }
@@ -47,56 +48,58 @@ export abstract class Role implements Creep {
      *
      * @param args Any args required by the specific role
      */
-    abstract run(...args: any[]): void;
+    public abstract run(...args: any[]): void;
 
-    //#region Creep interface implementation
-    get prototype() {
+    // #region Creep interface implementation
+    public get prototype() {
         return this.creep.prototype;
     }
-    get spawning() {
+    public get spawning() {
         return this.creep.spawning;
     }
-    get hits() {
+    public get hits() {
         return this.creep.hits;
     }
-    get hitsMax() {
+    public get hitsMax() {
         return this.creep.hitsMax;
     }
-    get my() {
+    public get my() {
         return this.creep.my;
     }
-    get fatigue() {
+    public get fatigue() {
         return this.creep.fatigue;
     }
-    get body() {
+    public get body() {
         return this.creep.body;
     }
-    get store() {
+    public get store() {
         return this.creep.store;
     }
-    get initialPos() {
+    public get initialPos() {
         return this.creep.initialPos;
     }
-    get id(): Id<any> {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore: Wrong type
+    public get id(): Id<Creep> {
         return this.creep.id;
     }
-    get exists() {
+    public get exists() {
         return this.creep.exists;
     }
-    get ticksToDecay() {
+    public get ticksToDecay() {
         return this.creep.ticksToDecay;
     }
-    get x() {
+    public get x() {
         return this.creep.x;
     }
-    get y() {
+    public get y() {
         return this.creep.y;
     }
 
-    move(direction: any) {
+    public move(direction: DirectionConstant) {
         return this.creep.move(direction);
     }
-    moveTo(target: RoomPosition, opts?: MoveToOpts | undefined) {
+    public moveTo(target: RoomPosition, opts?: MoveToOpts | undefined) {
         if (!opts) {
             opts = {};
         }
@@ -106,60 +109,64 @@ export abstract class Role implements Creep {
 
         return this.creep.moveTo(target, opts);
     }
-    rangedAttack(target: Creep | Structure<StructureConstant>) {
+    public rangedAttack(target: Creep | Structure<StructureConstant>) {
         return this.creep.rangedAttack(target);
     }
-    rangedMassAttack() {
+    public rangedMassAttack() {
         return this.creep.rangedMassAttack();
     }
-    attack(target: Creep | Structure<StructureConstant>) {
+    public attack(target: Creep | Structure<StructureConstant>) {
         return this.creep.attack(target);
     }
-    heal(target: Creep) {
+    public heal(target: Role | Creep): CreepActionReturnCode {
+        if (target instanceof Role) {
+            target = target.creep;
+        }
         return this.creep.heal(target);
     }
-    rangedHeal(target: Creep) {
+
+    public rangedHeal(target: Creep) {
         return this.creep.rangedHeal(target);
     }
-    harvest(target: Source) {
+    public harvest(target: Source) {
         return this.creep.harvest(target);
     }
-    pull(target: Creep) {
+    public pull(target: Creep) {
         return this.creep.pull(target);
     }
-    transfer(target: Creep | Structure<StructureConstant> | ScoreCollector, resourceType: any, amount?: number | undefined) {
+    public transfer(target: Creep | Structure<StructureConstant> | ScoreCollector, resourceType: ResourceConstant, amount?: number | undefined) {
         return this.creep.transfer(target, resourceType, amount);
     }
-    withdraw(target: Structure<StructureConstant>, resourceType: any, amount?: number | undefined) {
+    public withdraw(target: Structure<StructureConstant>, resourceType: ResourceConstant, amount?: number | undefined) {
         return this.creep.withdraw(target, resourceType, amount);
     }
-    drop(resourceType: any, amount?: number | undefined) {
+    public drop(resourceType: ResourceConstant, amount?: number | undefined) {
         return this.creep.drop(resourceType, amount);
     }
-    pickup(target: Resource) {
+    public pickup(target: Resource) {
         return this.creep.pickup(target);
     }
-    build(target: ConstructionSite<BuildableStructure>) {
+    public build(target: ConstructionSite<BuildableStructure>) {
         return this.creep.build(target);
     }
-    getRangeTo(pos: RoomPosition): number {
+    public getRangeTo(pos: RoomPosition): number {
         return this.creep.getRangeTo(pos);
     }
-    findPathTo(pos: RoomPosition, opts?: FindPathOpts | undefined): PathStep[] {
+    public findPathTo(pos: RoomPosition, opts?: FindPathOpts | undefined): PathStep[] {
         return this.creep.findPathTo(pos, opts);
     }
-    findInRange<T extends RoomPosition>(positions: T[], range: number): T[] {
+    public findInRange<T extends RoomPosition>(positions: T[], range: number): T[] {
         return this.creep.findInRange(positions, range);
     }
-    findClosestByRange<T extends RoomPosition>(positions: T[]): T | null {
+    public findClosestByRange<T extends RoomPosition>(positions: T[]): T | null {
         return this.creep.findClosestByRange(positions);
     }
-    findClosestByPath<T extends RoomPosition>(positions: T[], opts?: FindPathOpts | undefined): T | null {
+    public findClosestByPath<T extends RoomPosition>(positions: T[], opts?: FindPathOpts | undefined): T | null {
         return this.creep.findClosestByPath(positions, opts);
     }
-    toJSON(): RoomObjectJSON {
+    public toJSON(): RoomObjectJSON {
         return this.creep.toJSON();
     }
 
-    //#endregion Creep interface implementation
+    // #endregion Creep interface implementation
 }

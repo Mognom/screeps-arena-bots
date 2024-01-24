@@ -1,35 +1,13 @@
-import { Manager } from "common/managers/Manager";
 import { Creep, StructureSpawn } from "game/prototypes";
-import * as C from "game/constants";
+
+import { Manager } from "common/managers/Manager";
+import { SpawnOrder } from "./SpawnOrder";
 
 /**
  * The `Priority` enum is used to ensure important tasks are performed first.
  *
  * Spawns use the priority on orders to spawn more important creeps first.
  */
-export enum Priority {
-    Blocker = 0,
-    Critical = 1,
-    Important = 2,
-    Standard = 3,
-    Low = 4,
-    Trivial = 5,
-    Overflow = 6
-}
-
-export class SpawnOrder {
-    public priority: Priority;
-    public body: C.BodyPartConstant[];
-    public callback: (a: Creep) => void;
-    public name: String;
-
-    constructor(name: String, priority: Priority, body: C.BodyPartConstant[], callback: (a: Creep) => void) {
-        this.priority = priority;
-        this.body = body;
-        this.callback = callback;
-        this.name = name;
-    }
-}
 
 export class SpawnManager extends Manager {
     public spawn: StructureSpawn;
@@ -37,7 +15,7 @@ export class SpawnManager extends Manager {
     private current: Creep | undefined;
     private currentOrder: SpawnOrder | undefined;
 
-    constructor(spawn: StructureSpawn) {
+    public constructor(spawn: StructureSpawn) {
         super();
         this.spawn = spawn;
         this.spawnQueue = [];
@@ -55,7 +33,7 @@ export class SpawnManager extends Manager {
         return true;
     }
 
-    public getQueuedCountForName(name: String) {
+    public getQueuedCountForName(name: string) {
         return this.spawnQueue.filter(r => r.name === name).length;
     }
 
@@ -68,11 +46,11 @@ export class SpawnManager extends Manager {
             this.currentOrder = undefined;
         }
 
-        var order = this.spawnQueue[0];
+        const order = this.spawnQueue[0];
 
         if (order) {
-            var result = this.spawn.spawnCreep(order.body);
-            if (result.object != undefined) {
+            const result = this.spawn.spawnCreep(order.body);
+            if (result.object !== undefined) {
                 this.currentOrder = order;
                 this.current = result.object;
                 this.spawnQueue.shift();

@@ -1,11 +1,11 @@
 import { Creep, StructureSpawn } from "game/prototypes";
-import { LEFT_BASE_X, RIGHT_BASE_X, mySpawn, enemySpawn } from "arena_alpha_spawn_and_swamp/main";
+import { enemySpawn, mySpawn } from "common/constants";
 
 import { Role } from "common/roles/Role";
 import { flee } from "common/utils/utils";
 
 export class AttackerRole extends Role {
-    run(army: AttackerRole[], enemySoldiers: Creep[], enemyWorkers: Creep[], fleeing: boolean, ...args: any[]): void {
+    public run(army: AttackerRole[], enemySoldiers: Creep[], enemyWorkers: Creep[], fleeing: boolean): void {
         /**
          * TODO:
          *  - Better targeting
@@ -18,7 +18,7 @@ export class AttackerRole extends Role {
          *  - Better force calculations
          */
         if (this.x === undefined) {
-            var index = army.indexOf(this);
+            const index = army.indexOf(this);
             if (index !== -1) {
                 army.splice(index, 1);
             }
@@ -26,16 +26,16 @@ export class AttackerRole extends Role {
             return;
         }
 
-        var closestSoldier = this.findClosestByRange(enemySoldiers);
-        var closest = this.findClosestByRange(enemyWorkers);
-        var attackTarget: Creep | StructureSpawn = enemySpawn!;
-        var approachTarget: Creep | StructureSpawn = enemySpawn!;
-        var rangeToTarget = this.getRangeTo(enemySpawn!);
-        var shouldIgnore: Creep[] = [];
+        const closestSoldier = this.findClosestByRange(enemySoldiers);
+        const closest = this.findClosestByRange(enemyWorkers);
+        let attackTarget: Creep | StructureSpawn = enemySpawn;
+        let approachTarget: Creep | StructureSpawn = enemySpawn;
+        let rangeToTarget = this.getRangeTo(enemySpawn);
+        let shouldIgnore: Creep[] = [];
 
         // Prioritize soldiers to workers
         if (closestSoldier) {
-            var rangeToClosest = this.getRangeTo(closestSoldier);
+            const rangeToClosest = this.getRangeTo(closestSoldier);
             if (rangeToClosest <= 45) {
                 approachTarget = closestSoldier;
                 rangeToTarget = rangeToClosest;
@@ -46,7 +46,7 @@ export class AttackerRole extends Role {
         }
 
         if (closest && !attackTarget) {
-            var rangeToClosest = this.getRangeTo(closest);
+            const rangeToClosest = this.getRangeTo(closest);
             if (rangeToClosest <= 7) {
                 if (!approachTarget) {
                     approachTarget = closest;
@@ -80,17 +80,18 @@ export class AttackerRole extends Role {
         }
 
         // Heal others if needed
-        var damagedCreeps = army.filter(a => a.hits < a.hitsMax);
-        var healTarget: Creep | undefined;
-        var healDistance: number;
+        const damagedCreeps = army.filter(a => a.hits < a.hitsMax);
+        let healTarget: Creep | Role | undefined;
+        let healDistance: number;
         if (this.hits < this.hitsMax - 200) {
+            // eslint-disable-next-line @typescript-eslint/no-this-alias
             healTarget = this;
             healDistance = 0;
             // Enforce flee
             flee(this, attackTarget);
         } else {
-            for (var damaged of damagedCreeps) {
-                var range = this.getRangeTo(damaged);
+            for (const damaged of damagedCreeps) {
+                const range = this.getRangeTo(damaged);
                 healTarget = damaged;
                 healDistance = range;
                 if (range <= 1) {
