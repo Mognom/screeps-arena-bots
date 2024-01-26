@@ -2,7 +2,7 @@ import { Creep, StructureSpawn } from "game/prototypes";
 import { enemySpawn, mySpawn } from "common/constants";
 
 import { Role } from "common/roles/Role";
-import { flee } from "common/utils/utils";
+import { flee } from "common/utils/movementUtils";
 
 export class AttackerRole extends Role {
     public run(army: AttackerRole[], enemySoldiers: Creep[], enemyWorkers: Creep[], fleeing: boolean): void {

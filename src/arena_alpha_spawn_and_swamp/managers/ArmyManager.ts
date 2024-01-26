@@ -12,8 +12,7 @@ import { MoveToOpts } from "game/path-finder";
 import { Priority } from "common/managers/spawn/Priority";
 import { SpawnManager } from "common/managers/spawn/SpawnManager";
 import { SpawnOrder } from "common/managers/spawn/SpawnOrder";
-import { flee } from "common/utils/utils";
-import { getObjectsByPrototype } from "game/utils";
+import { flee } from "common/utils/movementUtils";
 
 const ARMY_QUEUE_NAME = "army";
 const HUNTER_QUEUE_NAME = "hunt";
