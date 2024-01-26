@@ -157,12 +157,17 @@ export abstract class Role implements Creep {
     }
     public heal(target: Role | Creep): CreepActionReturnCode {
         if (target instanceof Role) {
+            target.plannedHealing += this.healPower;
             target = target.creep;
         }
         return this.creep.heal(target);
     }
 
-    public rangedHeal(target: Creep) {
+    public rangedHeal(target: Role | Creep) {
+        if (target instanceof Role) {
+            target.plannedHealing += this.healPower / 3; // Ranged heals are 1/3 effective
+            target = target.creep;
+        }
         return this.creep.rangedHeal(target);
     }
     public harvest(target: Source) {
