@@ -5,6 +5,7 @@ import { HUNTER_TEMPLATE, KITE_TEMPLATE } from "common/constants/templates";
 import { LEFT_BASE_X, RIGHT_BASE_X } from "common/constants";
 
 import { AttackerRole } from "common/roles/AttackerRole";
+import { EnemyTracker } from "common/utils/EnemyTracker";
 import { Manager } from "common/managers/Manager";
 import { MidGameEconomyManager } from "./MidGameEconomyManager";
 import { MoveToOpts } from "game/path-finder";
@@ -15,7 +16,6 @@ import { flee } from "common/utils/utils";
 import { getObjectsByPrototype } from "game/utils";
 
 const ARMY_QUEUE_NAME = "army";
-const ARMY_PARTS: C.BodyPartConstant[] = [C.ATTACK, C.RANGED_ATTACK, C.HEAL];
 const HUNTER_QUEUE_NAME = "hunt";
 
 export class ArmyManager extends Manager {
@@ -54,10 +54,9 @@ export class ArmyManager extends Manager {
     }
 
     private tickArmy(gatherer: Creep | undefined) {
-        const enemyCreeps = getObjectsByPrototype(Creep).filter(c => !c.my);
-        const enemyArmy = enemyCreeps.filter(c => c.body.some(b => ARMY_PARTS.includes(b.type)));
-        const enemyWorkers = enemyCreeps.filter(c => !c.body.some(b => ARMY_PARTS.includes(b.type)));
-
+        const enemyCreeps = EnemyTracker.getEnemyCreeps();
+        const enemyArmy = EnemyTracker.getEnemyArmy();
+        const enemyWorkers = EnemyTracker.getEnemWorkers();
         if (this.hunter) {
             this.tickHunterCreep(this.hunter, enemyCreeps, gatherer);
         }
