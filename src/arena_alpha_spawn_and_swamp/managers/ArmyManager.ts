@@ -1,25 +1,21 @@
-import * as C from "game/constants";
-
 import { Creep, StructureSpawn } from "game/prototypes";
 import { HUNTER_TEMPLATE, KITE_TEMPLATE } from "common/constants/templates";
-import { LEFT_BASE_X, RIGHT_BASE_X } from "common/constants";
 
 import { AttackerRole } from "common/roles/AttackerRole";
 import { EnemyTracker } from "common/utils/EnemyTracker";
+import { HunterRole } from "common/roles/HunterRole";
 import { Manager } from "common/managers/Manager";
 import { MidGameEconomyManager } from "./MidGameEconomyManager";
-import { MoveToOpts } from "game/path-finder";
 import { Priority } from "common/managers/spawn/Priority";
 import { SpawnManager } from "common/managers/spawn/SpawnManager";
 import { SpawnOrder } from "common/managers/spawn/SpawnOrder";
-import { flee } from "common/utils/movementUtils";
 
 const ARMY_QUEUE_NAME = "army";
 const HUNTER_QUEUE_NAME = "hunt";
 
 export class ArmyManager extends Manager {
     private midGameEconomyManager: MidGameEconomyManager;
-    private hunter: Creep | undefined;
+    private hunter: HunterRole | undefined;
     private army: AttackerRole[];
     private spawnManager: SpawnManager;
     private enemySpawn: StructureSpawn;
@@ -40,7 +36,7 @@ export class ArmyManager extends Manager {
 
     private buildArmy(): boolean {
         if (!this.hunterOrdered) {
-            const huntOrder = new SpawnOrder(HUNTER_QUEUE_NAME, Priority.Important, HUNTER_TEMPLATE, (creep: Creep) => (this.hunter = creep));
+            const huntOrder = new SpawnOrder(HUNTER_QUEUE_NAME, Priority.Important, HUNTER_TEMPLATE, (creep: Creep) => (this.hunter = new HunterRole(creep)));
             this.spawnManager.spawnCreep(huntOrder);
             this.hunterOrdered = true;
         } else {
@@ -57,66 +53,10 @@ export class ArmyManager extends Manager {
         const enemyArmy = EnemyTracker.getEnemyArmy();
         const enemyWorkers = EnemyTracker.getEnemWorkers();
         if (this.hunter) {
-            this.tickHunterCreep(this.hunter, enemyCreeps, gatherer);
+            this.hunter.run(enemyCreeps, gatherer, this.army);
         }
         for (const creep of this.army) {
-            creep.run(this.army, enemyArmy, enemyWorkers, this.army.length <= 2);
+            creep.run(this.army, enemyArmy, enemyWorkers, this.army.length <= 3);
         }
-    }
-
-    private tickHunterCreep(creep: Creep, enemies: Creep[], gatherer: Creep | undefined) {
-        /**
-         * TOOD:
-         *  - Flee from ranged to preserve health
-         *  - Hunt any melee creep as well if it crosses
-         *  - Allow fallback into main army to help support the push
-         *  - Fetch healers if badly damaged
-         */
-        const closestGatherer = creep.findClosestByRange(
-            enemies.filter(c => c.x >= LEFT_BASE_X && c.x <= RIGHT_BASE_X && c.body.some(b => b.type === C.CARRY))
-        );
-
-        const closest = creep.findClosestByRange(enemies);
-        let target: Creep | null = closestGatherer;
-        let rangeToTarget = creep.getRangeTo(this.enemySpawn);
-        let shouldIgnore: Creep[] = [];
-        let hangOutSpot;
-        if (gatherer && gatherer.x !== undefined && gatherer.x >= LEFT_BASE_X && gatherer.x <= RIGHT_BASE_X) {
-            hangOutSpot = { x: gatherer.x, y: gatherer.y };
-        } else {
-            hangOutSpot = { x: 50, y: 50 };
-        }
-        if (closest) {
-            const rangeToClosest = creep.getRangeTo(closest);
-            if (rangeToClosest <= 7) {
-                target = closest;
-                rangeToTarget = rangeToClosest;
-            }
-        }
-
-        if (rangeToTarget >= 7) {
-            shouldIgnore = this.army;
-        }
-
-        if (target) {
-            if (rangeToTarget <= 3) {
-                if (rangeToTarget <= 1) {
-                    creep.rangedMassAttack();
-                } else {
-                    creep.rangedAttack(target);
-                }
-
-                if (rangeToTarget <= 2) {
-                    flee(creep, target); // TODO improve logic
-                }
-            } else {
-                creep.moveTo(target, { ignore: shouldIgnore });
-            }
-        } else {
-            creep.moveTo(hangOutSpot, { range: 3 } as MoveToOpts);
-        }
-
-        // TODO heal others if needed
-        creep.heal(creep);
     }
 }
