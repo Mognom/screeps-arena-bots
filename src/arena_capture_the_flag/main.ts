@@ -37,12 +37,6 @@ import { Flag } from "arena";
 import { Visual } from "game/visual";
 import { searchPath } from "game/path-finder";
 
-declare module "game/prototypes" {
-    interface Creep {
-        initialPos: RoomPosition;
-    }
-}
-
 // You can also import your files like this:
 // import {roleAttacker} from './roles/attacker.mjs';
 
