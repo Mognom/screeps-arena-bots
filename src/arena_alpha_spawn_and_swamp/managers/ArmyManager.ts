@@ -1,9 +1,9 @@
 import { Creep, StructureSpawn } from "game/prototypes";
 import { HUNTER_TEMPLATE, KITE_TEMPLATE } from "common/constants/templates";
 
-import { AttackerRole } from "common/roles/AttackerRole";
+import { AttackerRole } from "common/roles/Army/AttackerRole";
 import { EnemyTracker } from "common/utils/EnemyTracker/EnemyTracker";
-import { HunterRole } from "common/roles/HunterRole";
+import { HunterRole } from "common/roles/Army/HunterRole";
 import { Manager } from "common/managers/Manager";
 import { MidGameEconomyManager } from "./MidGameEconomyManager";
 import { Priority } from "common/managers/spawn/Priority";

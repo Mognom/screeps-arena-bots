@@ -1,10 +1,10 @@
 import { Creep, StructureSpawn } from "game/prototypes";
 import { enemySpawn, mySpawn } from "common/constants";
 
-import { Role } from "common/roles/Role";
+import { OwnedCreep } from "common/roles/OwnedCreep";
 import { flee } from "common/utils/movementUtils";
 
-export class AttackerRole extends Role {
+export class AttackerRole extends OwnedCreep {
     public run(army: AttackerRole[], enemySoldiers: Creep[], enemyWorkers: Creep[], fleeing: boolean): void {
         /**
          * TODO:
@@ -81,7 +81,7 @@ export class AttackerRole extends Role {
 
         // Heal others if needed
         const damagedCreeps = army.filter(a => a.hits < a.hitsMax);
-        let healTarget: Creep | Role | undefined;
+        let healTarget: Creep | OwnedCreep | undefined;
         let healDistance: number;
         if (this.hits < this.hitsMax - 200) {
             // eslint-disable-next-line @typescript-eslint/no-this-alias

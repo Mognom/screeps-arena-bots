@@ -4,60 +4,26 @@ import { BuildableStructure, CreepActionReturnCode, DirectionConstant, ResourceC
 import { ConstructionSite, Creep, Id, Resource, RoomObjectJSON, RoomPosition, Source, Structure, StructureConstant } from "game/prototypes";
 import { FindPathOpts, MoveToOpts, PathStep } from "game/path-finder";
 
+import { CreepDecorator } from "./CreepDecorator";
+import { EnemyCreep } from "./EnemyCreep";
 import { ScoreCollector } from "arena/prototypes";
 
 /**
  * Role decorator to extend the Creep class, and allow specialization
  */
-export abstract class Role implements Creep {
-    private creep: Creep;
+export abstract class OwnedCreep extends CreepDecorator {
     // Decorated properties
     protected plannedHealing: number;
     private previousHits: number;
     protected damageReceived: number;
     private currentSwampSpeed: number;
 
-    // Combat stats of the creep
-    private offensivePower: number;
-    private ranged: boolean;
-    private healPower: number;
-
     public constructor(creep: Creep) {
-        this.creep = creep;
+        super(creep);
         this.plannedHealing = 0;
         this.damageReceived = 0;
         this.previousHits = creep.hits;
         this.currentSwampSpeed = 2;
-
-        // Calculate combat stats of the creep
-        this.ranged = false;
-        this.offensivePower = 0;
-        this.healPower = 0;
-        this.populateCombatStats();
-    }
-
-    private populateCombatStats() {
-        for (const part of this.creep.body) {
-            switch (part.type) {
-                case C.ATTACK:
-                    this.offensivePower += C.ATTACK_POWER;
-                    break;
-                case C.RANGED_ATTACK:
-                    this.offensivePower += C.RANGED_ATTACK_POWER;
-                    this.ranged = true;
-                    break;
-                case C.HEAL:
-                    this.healPower += C.HEAL_POWER;
-                    break;
-            }
-        }
-    }
-
-    public get isRanged() {
-        return this.ranged;
-    }
-    public get isWorker() {
-        return this.offensivePower === 0 && this.healPower === 0;
     }
 
     /**
@@ -88,50 +54,6 @@ export abstract class Role implements Creep {
     public abstract run(...args: any[]): void;
 
     // #region Creep interface implementation
-    public get prototype() {
-        return this.creep.prototype;
-    }
-    public get spawning() {
-        return this.creep.spawning;
-    }
-    public get hits() {
-        return this.creep.hits;
-    }
-    public get hitsMax() {
-        return this.creep.hitsMax;
-    }
-    public get my() {
-        return this.creep.my;
-    }
-    public get fatigue() {
-        return this.creep.fatigue;
-    }
-    public get body() {
-        return this.creep.body;
-    }
-    public get store() {
-        return this.creep.store;
-    }
-    public get initialPos() {
-        return this.creep.initialPos;
-    }
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore: Wrong type
-    public get id(): Id<Creep> {
-        return this.creep.id;
-    }
-    public get exists() {
-        return this.creep.exists;
-    }
-    public get ticksToDecay() {
-        return this.creep.ticksToDecay;
-    }
-    public get x() {
-        return this.creep.x;
-    }
-    public get y() {
-        return this.creep.y;
-    }
 
     public move(direction: DirectionConstant) {
         return this.creep.move(direction);
@@ -146,25 +68,32 @@ export abstract class Role implements Creep {
 
         return this.creep.moveTo(target, opts);
     }
-    public rangedAttack(target: Creep | Structure<StructureConstant>) {
+    public rangedAttack(target: EnemyCreep | Creep | Structure<StructureConstant>) {
+        if (target instanceof EnemyCreep) {
+            target = target.creep;
+        }
         return this.creep.rangedAttack(target);
     }
     public rangedMassAttack() {
         return this.creep.rangedMassAttack();
     }
-    public attack(target: Creep | Structure<StructureConstant>) {
+    public attack(target: EnemyCreep | Creep | Structure<StructureConstant>) {
+        if (target instanceof EnemyCreep) {
+            target = target.creep;
+        }
         return this.creep.attack(target);
     }
-    public heal(target: Role | Creep): CreepActionReturnCode {
-        if (target instanceof Role) {
+
+    public heal(target: OwnedCreep | Creep): CreepActionReturnCode {
+        if (target instanceof OwnedCreep) {
             target.plannedHealing += this.healPower;
             target = target.creep;
         }
         return this.creep.heal(target);
     }
 
-    public rangedHeal(target: Role | Creep) {
-        if (target instanceof Role) {
+    public rangedHeal(target: OwnedCreep | Creep) {
+        if (target instanceof OwnedCreep) {
             target.plannedHealing += this.healPower / 3; // Ranged heals are 1/3 effective
             target = target.creep;
         }
@@ -173,10 +102,16 @@ export abstract class Role implements Creep {
     public harvest(target: Source) {
         return this.creep.harvest(target);
     }
-    public pull(target: Creep) {
+    public pull(target: Creep | OwnedCreep) {
+        if (target instanceof OwnedCreep) {
+            target = target.creep;
+        }
         return this.creep.pull(target);
     }
-    public transfer(target: Creep | Structure<StructureConstant> | ScoreCollector, resourceType: ResourceConstant, amount?: number | undefined) {
+    public transfer(target: OwnedCreep | Creep | Structure<StructureConstant> | ScoreCollector, resourceType: ResourceConstant, amount?: number | undefined) {
+        if (target instanceof OwnedCreep) {
+            target = target.creep;
+        }
         return this.creep.transfer(target, resourceType, amount);
     }
     public withdraw(target: Structure<StructureConstant>, resourceType: ResourceConstant, amount?: number | undefined) {

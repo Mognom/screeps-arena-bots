@@ -4,10 +4,10 @@ import { LEFT_BASE_X, RIGHT_BASE_X, enemySpawn } from "common/constants";
 
 import { AttackerRole } from "./AttackerRole";
 import { Creep } from "game/prototypes";
-import { Role } from "common/roles/Role";
+import { OwnedCreep } from "common/roles/OwnedCreep";
 import { flee } from "common/utils/movementUtils";
 
-export class HunterRole extends Role {
+export class HunterRole extends OwnedCreep {
     public run(enemies: Creep[], gatherer: Creep | undefined, army: AttackerRole[]) {
         /**
          * TOOD:
