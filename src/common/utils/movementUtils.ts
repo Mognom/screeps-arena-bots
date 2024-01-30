@@ -1,7 +1,7 @@
 import { Creep, RoomPosition } from "game/prototypes";
 
 import { CostMatrix } from "game/path-finder";
-import { EnemyTracker } from "./EnemyTracker";
+import { EnemyTracker } from "./EnemyTracker/EnemyTracker";
 import { getTicks } from "game/utils";
 
 let storedTick = 0;
@@ -24,7 +24,7 @@ function calculateCostMatrix(): CostMatrix {
         storedTick = thisTick;
 
         costMatrix = new CostMatrix();
-        const enemies = EnemyTracker.getEnemyArmy();
+        const enemies = EnemyTracker.i.getEnemyArmy();
         for (const enemy of enemies) {
             costMatrix.set(enemy.x, enemy.y, 100);
             for (let x = enemy.x - 2; x <= enemy.x + 2; x++) {

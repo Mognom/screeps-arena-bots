@@ -7,12 +7,23 @@ import { Creep } from "game/prototypes";
 const ARMY_PARTS: C.BodyPartConstant[] = [C.ATTACK, C.RANGED_ATTACK, C.HEAL];
 
 export class EnemyTracker {
-    private static enemyCreeps: Creep[] = [];
-    private static enemyArmy: Creep[] = [];
-    private static enemyWorkers: Creep[] = [];
-    private static currentTick: number;
+    private static instance: EnemyTracker;
+    private enemyCreeps: Creep[] = [];
+    private enemyArmy: Creep[] = [];
+    private enemyWorkers: Creep[] = [];
+    private currentTick: number = 0;
 
-    public static getEnemyCreeps(): Creep[] {
+    public static get i() {
+        if (!EnemyTracker.instance) {
+            EnemyTracker.instance = new EnemyTracker();
+        }
+
+        return EnemyTracker.instance;
+    }
+
+    private constructor() {}
+
+    public getEnemyCreeps(): Creep[] {
         const thisTick = getTicks();
         if (thisTick !== this.currentTick) {
             this.updateValues(thisTick);
@@ -21,7 +32,7 @@ export class EnemyTracker {
         return this.enemyCreeps;
     }
 
-    public static getEnemyArmy(): Creep[] {
+    public getEnemyArmy(): Creep[] {
         const thisTick = getTicks();
         if (thisTick !== this.currentTick) {
             this.updateValues(thisTick);
@@ -30,7 +41,7 @@ export class EnemyTracker {
         return this.enemyArmy;
     }
 
-    public static getEnemWorkers(): Creep[] {
+    public getEnemWorkers(): Creep[] {
         const thisTick = getTicks();
         if (thisTick !== this.currentTick) {
             this.updateValues(thisTick);
@@ -39,7 +50,7 @@ export class EnemyTracker {
         return this.enemyWorkers;
     }
 
-    private static updateValues(tick: number) {
+    private updateValues(tick: number) {
         this.enemyCreeps = getObjectsByPrototype(Creep).filter(c => !c.my);
         this.enemyArmy = this.enemyCreeps.filter(c => c.body.some(b => ARMY_PARTS.includes(b.type)));
         this.enemyWorkers = this.enemyCreeps.filter(c => !c.body.some(b => ARMY_PARTS.includes(b.type)));

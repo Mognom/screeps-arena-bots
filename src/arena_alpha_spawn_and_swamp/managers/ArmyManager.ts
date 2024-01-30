@@ -2,7 +2,7 @@ import { Creep, StructureSpawn } from "game/prototypes";
 import { HUNTER_TEMPLATE, KITE_TEMPLATE } from "common/constants/templates";
 
 import { AttackerRole } from "common/roles/AttackerRole";
-import { EnemyTracker } from "common/utils/EnemyTracker";
+import { EnemyTracker } from "common/utils/EnemyTracker/EnemyTracker";
 import { HunterRole } from "common/roles/HunterRole";
 import { Manager } from "common/managers/Manager";
 import { MidGameEconomyManager } from "./MidGameEconomyManager";
@@ -49,9 +49,9 @@ export class ArmyManager extends Manager {
     }
 
     private tickArmy(gatherer: Creep | undefined) {
-        const enemyCreeps = EnemyTracker.getEnemyCreeps();
-        const enemyArmy = EnemyTracker.getEnemyArmy();
-        const enemyWorkers = EnemyTracker.getEnemWorkers();
+        const enemyCreeps = EnemyTracker.i.getEnemyCreeps();
+        const enemyArmy = EnemyTracker.i.getEnemyArmy();
+        const enemyWorkers = EnemyTracker.i.getEnemWorkers();
         if (this.hunter) {
             this.hunter.run(enemyCreeps, gatherer, this.army);
         }
