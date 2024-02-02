@@ -1,6 +1,8 @@
 import * as C from "game/constants";
 
-import { Creep, Id } from "game/prototypes";
+import { Creep, Id, RoomObjectJSON, RoomPosition } from "game/prototypes";
+
+import { FindPathOpts } from "game/path-finder";
 
 /**
  * Role decorator to extend the Creep class, and allow specialization
@@ -95,6 +97,21 @@ export abstract class CreepDecorator implements Creep {
     }
     public get y() {
         return this.creep.y;
+    }
+    public getRangeTo(pos: RoomPosition): number {
+        return this.creep.getRangeTo(pos);
+    }
+    public findInRange<T extends RoomPosition>(positions: T[], range: number): T[] {
+        return this.creep.findInRange(positions, range);
+    }
+    public findClosestByRange<T extends RoomPosition>(positions: T[]): T | null {
+        return this.creep.findClosestByRange(positions);
+    }
+    public findClosestByPath<T extends RoomPosition>(positions: T[], opts?: FindPathOpts | undefined): T | null {
+        return this.creep.findClosestByPath(positions, opts);
+    }
+    public toJSON(): RoomObjectJSON {
+        return this.creep.toJSON();
     }
     // #endregion Creep interface implementation
 }

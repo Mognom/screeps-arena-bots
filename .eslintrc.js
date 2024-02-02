@@ -16,7 +16,7 @@ module.exports = {
     ignorePatterns: ["exported-game-constants.js"],
     parser: "@typescript-eslint/parser",
     parserOptions: {
-        project: "tsconfig.json",
+        project: "tsconfig.eslint.json",
         sourceType: "module"
     },
     plugins: ["@typescript-eslint", "import"],

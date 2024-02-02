@@ -1,7 +1,5 @@
-import * as C from "game/constants";
-
 import { BuildableStructure, CreepActionReturnCode, DirectionConstant, ResourceConstant } from "game/constants";
-import { ConstructionSite, Creep, Id, Resource, RoomObjectJSON, RoomPosition, Source, Structure, StructureConstant } from "game/prototypes";
+import { ConstructionSite, Creep, Resource, RoomPosition, Source, Structure, StructureConstant } from "game/prototypes";
 import { FindPathOpts, MoveToOpts, PathStep } from "game/path-finder";
 
 import { CreepDecorator } from "./CreepDecorator";
@@ -126,24 +124,8 @@ export abstract class OwnedCreep extends CreepDecorator {
     public build(target: ConstructionSite<BuildableStructure>) {
         return this.creep.build(target);
     }
-    public getRangeTo(pos: RoomPosition): number {
-        return this.creep.getRangeTo(pos);
-    }
     public findPathTo(pos: RoomPosition, opts?: FindPathOpts | undefined): PathStep[] {
         return this.creep.findPathTo(pos, opts);
     }
-    public findInRange<T extends RoomPosition>(positions: T[], range: number): T[] {
-        return this.creep.findInRange(positions, range);
-    }
-    public findClosestByRange<T extends RoomPosition>(positions: T[]): T | null {
-        return this.creep.findClosestByRange(positions);
-    }
-    public findClosestByPath<T extends RoomPosition>(positions: T[], opts?: FindPathOpts | undefined): T | null {
-        return this.creep.findClosestByPath(positions, opts);
-    }
-    public toJSON(): RoomObjectJSON {
-        return this.creep.toJSON();
-    }
-
     // #endregion Creep interface implementation
 }

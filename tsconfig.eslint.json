@@ -14,6 +14,6 @@
         "allowUnreachableCode": false,
         "typeRoots": ["./node_modules/@types", "./@types", "./node_modules/@types/screeps-arena/dist"]
     },
-    "exclude": ["node_modules"],
-    "include": ["src"]
+    "extends": "./tsconfig.json",
+    "include": [".eslintrc.js", "jest.config.js", "test"]
 }

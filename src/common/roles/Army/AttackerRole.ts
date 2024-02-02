@@ -1,11 +1,12 @@
 import { Creep, StructureSpawn } from "game/prototypes";
 import { enemySpawn, mySpawn } from "common/constants";
 
+import { EnemyCreep } from "../EnemyCreep";
 import { OwnedCreep } from "common/roles/OwnedCreep";
 import { flee } from "common/utils/movementUtils";
 
 export class AttackerRole extends OwnedCreep {
-    public run(army: AttackerRole[], enemySoldiers: Creep[], enemyWorkers: Creep[], fleeing: boolean): void {
+    public run(army: AttackerRole[], enemySoldiers: EnemyCreep[], enemyWorkers: EnemyCreep[], fleeing: boolean): void {
         /**
          * TODO:
          *  - Better targeting
@@ -28,8 +29,8 @@ export class AttackerRole extends OwnedCreep {
 
         const closestSoldier = this.findClosestByRange(enemySoldiers);
         const closest = this.findClosestByRange(enemyWorkers);
-        let attackTarget: Creep | StructureSpawn = enemySpawn;
-        let approachTarget: Creep | StructureSpawn = enemySpawn;
+        let attackTarget: EnemyCreep | StructureSpawn = enemySpawn;
+        let approachTarget: EnemyCreep | StructureSpawn = enemySpawn;
         let rangeToTarget = this.getRangeTo(enemySpawn);
         let shouldIgnore: Creep[] = [];
 

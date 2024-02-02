@@ -29,7 +29,7 @@ export class EnemyCreep extends CreepDecorator {
     }
 
     // Check if it would die this tick with the current planned damage
-    public isPlannedDead(newDamage: number = 0): boolean {
+    public isPlannedDead(newDamage = 0): boolean {
         return this.hits - this.plannedDamage - newDamage + this.estimatedHealing <= 0;
     }
 
