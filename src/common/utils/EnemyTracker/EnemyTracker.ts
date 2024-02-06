@@ -2,11 +2,11 @@ import * as C from "game/constants";
 
 import { getObjectsByPrototype, getTicks } from "game/utils";
 
+import { Clusters } from "../lib/Clusters";
 import { Creep } from "game/prototypes";
 import { EnemyCreep } from "common/roles/EnemyCreep";
 import { EnemyGroup } from "./EnemyGroup";
 import { MAX_GROUP_DISTANCE } from "common/constants";
-import { MaxDistanceClustering } from "../lib/MaxDistanceClustering";
 import { Visual } from "game/visual";
 
 const ARMY_PARTS: C.BodyPartConstant[] = [C.ATTACK, C.RANGED_ATTACK, C.HEAL];
@@ -71,14 +71,11 @@ export class EnemyTracker {
 
         // BETA: Group building logic
         this.buildGroups();
-        // this.debugGroups();
+        this.debugGroups();
     }
 
     private buildGroups(): void {
-        const clustering = new MaxDistanceClustering(this.enemyArmy, MAX_GROUP_DISTANCE);
-        clustering.run();
-
-        // Assign clustered creeps to new groups
+        this.armyGroups = Clusters.run(this.enemyArmy, MAX_GROUP_DISTANCE);
     }
 
     private debugGroups(): void {
