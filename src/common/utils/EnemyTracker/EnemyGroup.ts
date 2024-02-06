@@ -7,16 +7,17 @@ export class EnemyGroup {
     private healPower: number;
     private threatLevel: number;
 
-    public constructor(firstCreep: EnemyCreep) {
-        this.creeps = [firstCreep];
+    public constructor() {
+        this.creeps = [];
         this.combatPower = 0;
         this.healPower = 0;
         this.threatLevel = 0; // TODO calculate
     }
 
-    public addCreep(creep: EnemyCreep) {
+    public addCreep(creep: EnemyCreep): EnemyGroup {
         this.creeps.push(creep);
         // TODO recalculate stats
+        return this;
     }
 
     public removeCreep(creep: EnemyCreep) {
