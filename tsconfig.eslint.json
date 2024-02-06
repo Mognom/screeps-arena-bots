@@ -15,5 +15,5 @@
         "typeRoots": ["./node_modules/@types", "./@types", "./node_modules/@types/screeps-arena/dist"]
     },
     "extends": "./tsconfig.json",
-    "include": [".eslintrc.js", "jest.config.js", "test"]
+    "include": ["src", ".eslintrc.js", "jest.config.js", "test"]
 }
