@@ -48,6 +48,18 @@ export abstract class CreepDecorator implements Creep {
         return this.offensivePower === 0 && this.healPower === 0;
     }
 
+    public get OffensivePower() {
+        return this.offensivePower;
+    }
+
+    public get Ranged() {
+        return this.ranged;
+    }
+
+    public get HealPower() {
+        return this.healPower;
+    }
+
     /**
      * Early tick calculations, used to check the status diff between the previous and the current tick
      */

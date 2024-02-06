@@ -17,11 +17,15 @@ export class EnemyGroup {
     public addCreep(creep: EnemyCreep): EnemyGroup {
         this.creeps.push(creep);
         // TODO recalculate stats
+        this.combatPower += creep.OffensivePower;
+        this.healPower += creep.HealPower;
         return this;
     }
 
     public removeCreep(creep: EnemyCreep) {
         this.creeps.splice(this.creeps.indexOf(creep), 1);
+        this.combatPower -= creep.OffensivePower;
+        this.healPower -= creep.HealPower;
     }
 
     public debugVisual(debugVisual: Visual): void {
